@@ -115,7 +115,7 @@ fakestation+rubyripper+test&proto=6"
       getFreedb.finalDiscId == '7F087C01'
     end
 
-    it "should get the first response if multiple are reported when firstHit preference is true" do
+    it "should get the first response if multiple close matches are reported when firstHit preference is true" do
       allow(prefs).to receive(:firstHit).and_return true
       choices = "blues 7F087C0A Artist A / Album A\nrock 7F087C0B Artist B / Album \
 B\n\jazz 7F087C0C Artist C / Album C\n\country 7F087C0D Artist D / Album D\n."
@@ -132,6 +132,23 @@ B\n\jazz 7F087C0C Artist C / Album C\n\country 7F087C0D Artist D / Album D\n."
       getFreedb.finalDiscId == '7F087C01'
     end
 
+    it "should get the first response if multiple exact matches are reported when firstHit preference is true" do
+      allow(prefs).to receive(:firstHit).and_return true
+      choices = "blues 7F087C0A Artist A / Album A\nrock 7F087C0B Artist B / Album \
+B\n\jazz 7F087C0C Artist C / Album C\n\country 7F087C0D Artist D / Album D\n."
+
+      setQueryReply("210 code close matches found\n#{choices}")
+      setReadReply()
+      getFreedb.queryDisc(@disc)
+
+      expect(getFreedb.status).to eq('ok')
+      expect(getFreedb.freedbRecord).to eq(@file)
+      expect(getFreedb.choices).to eq(choices[0..-3].split("\n"))
+      expect(getFreedb.choices.length).to eq(4)
+      expect(getFreedb.category).to eq('metal')
+      getFreedb.finalDiscId == '7F087C01'
+    end
+    
     context "when multiple records are reported and the user wishes to choose" do
       before(:each){allow(prefs).to receive(:firstHit).and_return false}
 
