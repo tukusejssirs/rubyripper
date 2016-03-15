@@ -26,7 +26,7 @@ describe GetFreedbRecord do
     allow(prefs).to receive(:site).and_return 'http://freedb.freedb.org/~cddb/cddb.cgi'
     query ||= '200 blues 7F087C0A Some random artist / Some random album'
     expect(network).to receive(:startCgiConnection).once.with('http://freedb.freedb.org/~cddb/cddb.cgi')
-    expect(network).to receive(:encode).at_least(:once).with(anything()).and_return {|a| CGI.escape(a)}
+    expect(network).to receive(:encode).at_least(:once).with(anything()) {|a| CGI.escape(a)}
     expect(network).to receive(:get).with(@query_disc).and_return query
   end
 
