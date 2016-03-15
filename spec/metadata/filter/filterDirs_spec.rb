@@ -25,8 +25,8 @@ describe Metadata::FilterDirs do
   let(:filter) {Metadata::FilterDirs.new(data, prefs)}
   
   before(:each) do
-    prefs.stub!(:noSpaces).and_return false
-    prefs.stub!(:noCapitals).and_return false
+    allow(prefs).to receive(:noSpaces).and_return(false)
+    allow(prefs).to receive(:noCapitals).and_return(false)
   end
   
   context "When determining the dirname it should be valid in a FAT filesystem" do
@@ -84,13 +84,13 @@ describe Metadata::FilterDirs do
   context "Replace any characters that are not wished by the user" do
     it "should replace all spaces to underscores if wished for" do
       data.artist = 'Hello world'
-      prefs.stub!(:noSpaces).and_return true
+      allow(prefs).to receive(:noSpaces).and_return(true)
       filter.artist.should == "Hello_world"
     end
     
     it "should downsize all letters if wished for" do
       data.artist = 'hELLo WoRLD'
-      prefs.stub!(:noCapitals).and_return true
+      allow(prefs).to receive(:noCapitals).and_return(true)
       filter.artist.should == 'hello world'
     end
   end
