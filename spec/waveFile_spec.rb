@@ -34,7 +34,7 @@ describe WaveFile do
       tmpFile2 = Tempfile.new('tempWaveFile2')
       tmpFile2.write("RIFF\x54\x09\x00\x00WAVEfmt \x10\x00\x00\x00\x01\x00\x02\x00\x44\xAC\x00\x00\x10\xB1\x00\x00\x02\x00\x04\x00data\x30\x09\x00\x00")
       # 1 sector
-      tmpFile2.write("\x10\x10\x10\x10\x20\x20\x20\x20" * (588 / 2))
+      expect(tmpFile2.write("\x10\x10\x10\x10\x20\x20\x20\x20" * (588 / 2)))
       tmpFile2.close()
 
       @waveFile1 = WaveFile.new(tmpFile1.path)
@@ -42,22 +42,22 @@ describe WaveFile do
     end
     
     it "should read individual sectors correctly" do
-      @waveFile1.read(0).should == "\x01\x01\x01\x01\x02\x02\x02\x02" * (588/2)
-      @waveFile1.read(1).should == "\x03\x03\x03\x03\x04\x04\x04\x04" * (588/2)
-      @waveFile1.read(2).should == "\x05\x05\x05\x05\x06\x06\x06\x06" * (588/2)
-      @waveFile1.read(3).should == "\x07\x07\x07\x07\x08\x08\x08\x08" * (588/2)
+      expect(@waveFile1.read(0)).to eq("\x01\x01\x01\x01\x02\x02\x02\x02" * (588/2))
+      expect(@waveFile1.read(1)).to eq("\x03\x03\x03\x03\x04\x04\x04\x04" * (588/2))
+      expect(@waveFile1.read(2)).to eq("\x05\x05\x05\x05\x06\x06\x06\x06" * (588/2))
+      expect(@waveFile1.read(3)).to eq("\x07\x07\x07\x07\x08\x08\x08\x08" * (588/2))
     end
     
     it "should return all of its data with audioData" do
-      @waveFile1.audioData.should ==
+      expect(@waveFile1.audioData).to eq(
         (("\x01\x01\x01\x01\x02\x02\x02\x02" * (588 / 2)) +
          ("\x03\x03\x03\x03\x04\x04\x04\x04" * (588 / 2)) +
          ("\x05\x05\x05\x05\x06\x06\x06\x06" * (588 / 2)) +
-         ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2)))
+         ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2))))
     end
     
     it "should know how many sectors it has" do
-      @waveFile1.numSectors.should == 4
+      expect(@waveFile1.numSectors).to eq(4)
     end
     
     context "with a positive offset" do
@@ -66,25 +66,25 @@ describe WaveFile do
       end
 
       it "should trim samples from the start and pad the end" do
-        @waveFile1.audioData.should ==
+        expect(@waveFile1.audioData).to eq(
           ("\x02\x02\x02\x02" +
            ("\x01\x01\x01\x01\x02\x02\x02\x02" * (588 / 2 - 2)) +
            ("\x03\x03\x03\x03\x04\x04\x04\x04" * (588 / 2)) +
            ("\x05\x05\x05\x05\x06\x06\x06\x06" * (588 / 2)) +
            ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2)) +
-           ("\x00\x00\x00\x00" * 3))
+           ("\x00\x00\x00\x00" * 3)))
       end
       
       it "should correct the wave file sizes on save! when padMissingSamples false" do
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header, minus 12 trimmed
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36 - 12)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36 - 12))
         # 2352 bytes/sector, minus 12 trimmed
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4 - 12)
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4 - 12))
         # No padding.
-        writtenData.length.should == (2352 * 4 + 44 - 12)
-        writtenData[-4..-1].should == "\x08\x08\x08\x08"
+        expect(writtenData.length).to eq((2352 * 4 + 44 - 12))
+        expect(writtenData[-4..-1]).to eq("\x08\x08\x08\x08")
       end
 
       it "should not correct wave file sizes on save! when padMissingSamples true" do
@@ -92,12 +92,12 @@ describe WaveFile do
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36))
         # 2352 bytes/sector
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4)
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4))
         # Padding
-        writtenData.length.should == (2352 * 4 + 44)
-        writtenData[-4..-1].should == "\x00\x00\x00\x00"
+        expect(writtenData.length).to eq((2352 * 4 + 44))
+        expect(writtenData[-4..-1]).to eq("\x00\x00\x00\x00")
       end
     end
     
@@ -107,25 +107,25 @@ describe WaveFile do
       end
 
       it "should trim samples from the end and pad the start" do
-        @waveFile1.audioData.should ==
+        expect(@waveFile1.audioData).to eq(
           (("\x00\x00\x00\x00" * 3) +
            ("\x01\x01\x01\x01\x02\x02\x02\x02" * (588 / 2)) +
            ("\x03\x03\x03\x03\x04\x04\x04\x04" * (588 / 2)) +
            ("\x05\x05\x05\x05\x06\x06\x06\x06" * (588 / 2)) +
            ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2 - 2) +
-            "\x07\x07\x07\x07"))
+            "\x07\x07\x07\x07")))
       end
       
       it "should correct the wave file sizes on save! when padMissingSamples false" do
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header, minus 12 trimmed
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36 - 12)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36 - 12))
         # 2352 bytes/sector, minus 12 trimmed
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4 - 12)
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4 - 12))
         # No padding.
-        writtenData.length.should == (2352 * 4 + 44 - 12)
-        writtenData[44..47].should == "\x01\x01\x01\x01"
+        expect(writtenData.length).to eq((2352 * 4 + 44 - 12))
+        expect(writtenData[44..47]).to eq("\x01\x01\x01\x01")
       end
 
       it "should not correct wave file sizes on save! when padMissingSamples true" do
@@ -133,37 +133,37 @@ describe WaveFile do
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36))
         # 2352 bytes/sector
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4)
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4))
         # Padding
-        writtenData.length.should == (2352 * 4 + 44)
-        writtenData[44..47].should == "\x00\x00\x00\x00"
+        expect(writtenData.length).to eq((2352 * 4 + 44))
+        expect(writtenData[44..47]).to eq("\x00\x00\x00\x00")
       end
     end
 
     context "when splicing" do
       it "should replace with the data of another WaveFile object" do
         @waveFile1.splice(1, @waveFile2.read(0))
-        @waveFile1.audioData.should ==
+        expect(@waveFile1.audioData).to eq(
           (("\x01\x01\x01\x01\x02\x02\x02\x02" * (588 / 2)) +
            ("\x10\x10\x10\x10\x20\x20\x20\x20" * (588 / 2)) +
            ("\x05\x05\x05\x05\x06\x06\x06\x06" * (588 / 2)) +
-           ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2)))
+           ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2))))
 
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36))
         # 2352 bytes/sector
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4)
-        writtenData[(44 + 2352)..(44 + 2352 + 3)].should == "\x10\x10\x10\x10"
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4))
+        expect(writtenData[(44 + 2352)..(44 + 2352 + 3)]).to eq("\x10\x10\x10\x10")
       end
 
       it "should replace the offset sector with the data" do
         @waveFile1.offset = 3
         @waveFile1.splice(1, @waveFile2.read(0))
-        @waveFile1.audioData.should ==
+        expect(@waveFile1.audioData).to eq(
           ("\x02\x02\x02\x02" +
            ("\x01\x01\x01\x01\x02\x02\x02\x02" * (588 / 2 - 2)) +
            ("\x03\x03\x03\x03\x04\x04\x04\x04\x03\x03\x03\x03") +
@@ -171,16 +171,16 @@ describe WaveFile do
            "\x06\x06\x06\x06" +
            ("\x05\x05\x05\x05\x06\x06\x06\x06" * (588 / 2 - 2)) +
            ("\x07\x07\x07\x07\x08\x08\x08\x08" * (588 / 2)) +
-           ("\x00\x00\x00\x00" * 3))
+           ("\x00\x00\x00\x00" * 3)))
 
         @waveFile1.padMissingSamples = true
         @waveFile1.save!
         writtenData = File.binread(@waveFile1.path)
         # 2352 bytes/sector, plus 36 for header
-        writtenData[4..7].unpack('V')[0].should == (2352 * 4 + 36)
+        expect(writtenData[4..7].unpack('V')[0]).to eq((2352 * 4 + 36))
         # 2352 bytes/sector
-        writtenData[40..43].unpack('V')[0].should == (2352 * 4)
-        writtenData[(44 + 2352 - 4)..(44 + 2352 + 3)].should == "\x03\x03\x03\x03\x10\x10\x10\x10"
+        expect(writtenData[40..43].unpack('V')[0]).to eq((2352 * 4))
+        expect(writtenData[(44 + 2352 - 4)..(44 + 2352 + 3)]).to eq("\x03\x03\x03\x03\x10\x10\x10\x10")
       end
     end
   end
