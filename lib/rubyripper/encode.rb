@@ -54,12 +54,17 @@ class Encode
     # all encoding tasks are saved here, to determine when to delete a wav
     @tasks = Hash.new
     if @prefs.image
-      @tasks['image'] = @prefs.codecs
+      @tasks['image'] = getCopyOfPrefsCodecs 
     else
-      @trackSelection.each{|track| @tasks[track] = @prefs.codecs}
+      @trackSelection.each{|track| @tasks[track] = getCopyOfPrefsCodecs}
     end
   end
 
+  def getCopyOfPrefsCodecs
+    pref_codecs = [] ; @prefs.codecs.each{|codec| pref_codecs << codec }
+    pref_codecs
+  end
+  
   # is called when a track is ripped succesfully
   def addTrack(track=nil)
     startEncoding(track) unless waitingForNormalizeToFinish(track)
