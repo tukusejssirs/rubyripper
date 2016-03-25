@@ -20,12 +20,12 @@ require 'rubyripper/preferences/main'
 
 module Metadata
   class Main
-    def initialize(disc, prefs=nil, musicbrainz=nil, freedb=nil, data=nil)
+    def initialize(disc, prefs=nil, musicbrainz=nil, freedb=nil, no_provider=nil)
       @disc = disc
       @prefs = prefs ? prefs : Preferences::Main.instance
       @musicbrainz = musicbrainz
       @freedb = freedb
-      @data = data
+      @no_provider = no_provider
     end
     
     # decide which metadataprovider is active
@@ -70,8 +70,9 @@ module Metadata
     end
     
     def none
-      require 'rubyripper/metadata/data'
-      @provider = @data ? @data : Metadata::Data.new()
+      require 'rubyripper/metadata/noProvider'
+      @provider = @no_provider ? @no_provider : NoProvider.new(@disc)
+      @provider.get()
     end
   end
 end

@@ -23,8 +23,8 @@ describe Metadata::Main do
   let(:prefs) {double('Preferences').as_null_object}
   let(:musicbrainz) {double('MusicBrainz').as_null_object}
   let(:freedb) {double('Freedb').as_null_object}
-  let(:data) {double('Metadata::Data').as_null_object}
-  let(:main) {Metadata::Main.new(disc,prefs,musicbrainz,freedb,data)}
+  let(:no_provider) {double('NoProvider').as_null_object}
+  let(:main) {Metadata::Main.new(disc,prefs,musicbrainz,freedb,no_provider)}
 
   context "When the metadata for a disc is requested" do
     it "should use Musicbrainz if that is the preference" do
@@ -43,7 +43,7 @@ describe Metadata::Main do
     
     it "should skip both providers if that is the preference" do
       allow(prefs).to receive(:metadataProvider).and_return("none")
-      expect(main.get).to eq(data)
+      expect(main.get).to eq(no_provider)
     end
     
     context "Given the preference is set to musicbrainz" do
@@ -64,7 +64,7 @@ describe Metadata::Main do
         expect(musicbrainz).to receive(:status).and_return 'mayday'
         expect(freedb).to receive(:get)
         expect(freedb).to receive(:status).and_return 'mayday'
-        expect(main.get).to eq(data)
+        expect(main.get).to eq(no_provider)
       end
     end
     
@@ -86,7 +86,7 @@ describe Metadata::Main do
         expect(freedb).to receive(:status).and_return 'mayday'
         expect(musicbrainz).to receive(:get)
         expect(musicbrainz).to receive(:status).and_return 'mayday'
-        expect(main.get).to eq(data)
+        expect(main.get).to eq(no_provider)
       end
     end
   end
