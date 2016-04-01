@@ -86,5 +86,28 @@ module Metadata
     end
   
     def various? ; @varArtist.size > 0 ; end
+
+    def ==(other)
+      generalEqual = @artist == other.artist &&
+                     @album == other.album &&
+                     @genre == other.genre &&
+                     @year == other.year &&
+                     @discid == other.discid
+        
+      varArtistEqual = @varArtist.length == other.varArtist.length
+      if varArtistEqual
+        (1..@varArtist.length).each do |track|
+          varArtistEqual &= @varArtist[track] == other.varArtist[track]
+        end
+      end
+
+      tracksEqual = @tracklist.length == other.tracklist.length
+      if tracksEqual
+        (1..@tracklist.length).each do |track|
+          tracksEqual &= @tracklist[track] == other.tracklist[track]
+        end
+      end
+      return generalEqual && varArtistEqual && tracksEqual
+    end
   end
 end
