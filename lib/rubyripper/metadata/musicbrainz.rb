@@ -59,6 +59,11 @@ attr_reader :status
   def undoVarArtist ; end
   def redoVarArtist ; end
 
+  # This is supposed to convert metadata content and save it as musicbrainz
+  # record localy (not implemented!) 
+  def save()
+    puts 'Trying to save MusicBrainz record. The functionality is not (yet) implemented. Ignoring...'
+  end
   private
 
   # if the method is not found try to look it up in the data object
