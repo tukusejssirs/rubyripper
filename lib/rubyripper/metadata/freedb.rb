@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 #    Rubyripper - A secure ripper for Linux/BSD/OSX
 #    Copyright (C) 2007 - 2010 Bouke Woudstra (boukewoudstra@gmail.com)
+#    Copyright (C) 2016 BleskoDev (bleskodev@gmail.com)
 #
 #    This file is part of Rubyripper. Rubyripper is free software: you can
 #    redistribute it and/or modify it under the terms of the GNU General
@@ -21,6 +22,7 @@ require 'rubyripper/metadata/freedb/loadFreedbRecord'
 require 'rubyripper/metadata/freedb/saveFreedbRecord'
 require 'rubyripper/metadata/freedb/freedbRecordParser'
 require 'rubyripper/metadata/freedb/getFreedbRecord'
+require 'rubyripper/metadata/freedb/freedbRecordGenerator'
 require 'rubyripper/metadata/data'
 
 # This class is responsible for getting all metadata of the disc and tracks
@@ -28,7 +30,7 @@ class Freedb
   attr_reader :status
 
   # setting up all necessary objects
-  def initialize(disc, loadFreedbRecord=nil, save=nil, md=nil, parser=nil, getFreedb=nil, prefs=nil, deps=nil)
+  def initialize(disc, loadFreedbRecord=nil, save=nil, md=nil, parser=nil, getFreedb=nil, prefs=nil, deps=nil, generator=nil)
     @disc = disc
     @loadFreedbRecord = loadFreedbRecord ? loadFreedbRecord : LoadFreedbRecord.new()
     @prefs = prefs ? prefs : Preferences::Main.instance
@@ -37,6 +39,7 @@ class Freedb
     @md = md ? md : Metadata::Data.new()
     @parser = parser ? parser : FreedbRecordParser.new(@md)
     @getFreedb = getFreedb ? getFreedb : GetFreedbRecord.new()
+    @generator = generator ? generator : FreedbRecordGenerator.new()
   end
 
   # get the metadata for the disc
@@ -50,6 +53,12 @@ class Freedb
   # helper function for the freedbrecordparser class
   def undoVarArtist ; @parser.undoVarArtist ; end
   def redoVarArtist ; @parser.redoVarArtist ; end
+
+  # convert metadata content to freedb record and save it localy
+  def save()
+    freedbRecord = @generator.generate(@disc)
+    @save.save(freedbRecord, @md.genre,@disc.freedbDiscid)
+  end
 
   private
 
