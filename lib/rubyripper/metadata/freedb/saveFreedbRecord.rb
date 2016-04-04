@@ -27,11 +27,12 @@ class SaveFreedbRecord
   # * freedbRecord = the complete freedb record string with all metadata
   # * category = the freedb category string, needed for saving locally
   # * discid = the discid string, which is the filename
-  def save(freedbRecord, category, discid)
+  # * force = overwrite existing file
+  def save(freedbRecord, category, discid, force = false)
     @freedbRecord = freedbRecord
     @category = category
     @discid = discid
-    saveDiscid()
+    saveDiscid(force)
   end
 
   # return the file location
@@ -39,10 +40,10 @@ class SaveFreedbRecord
 
 private
 
-  # if $HOME/.cddb/<category>/<discid> does nog exist, create it
-  def saveDiscid
+  # if $HOME/.cddb/<category>/<discid> does not exist, create it
+  def saveDiscid(force)
     @outputFile = File.join(ENV['HOME'], '.cddb', @category,
 @discid)
-    @file.write(@outputFile, @freedbRecord, force=false)
+    @file.write(@outputFile, @freedbRecord, force)
   end
 end
