@@ -88,6 +88,10 @@ attr_reader :metadata
     @cdrdao.preEmph?(track) unless @cdrdao.nil?
   end
 
+  def save
+    @metadata.save() if @metadata
+  end
+
   private
   
   # if the method is not found try to look it up in cdparanoia

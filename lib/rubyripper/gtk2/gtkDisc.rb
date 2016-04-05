@@ -57,18 +57,20 @@ class GtkDisc
   
   # store any updates the user has made and save the selected tracks
   def save
-    @md.artist = @artistEntry.text
-    @md.album = @albumEntry.text
-    @md.genre = @genreEntry.text
-    @md.year = @yearEntry.text if @yearEntry.text.to_i != 0
-    @md.discNumber = @discNumberSpin.value.to_i if @freezeCheckbox.active?
-
+    # compare user updates with existing metadata to detrmine if
+    # freedb record needs to be saved into the local cache
+    metadata = Metadata::Data.new()
+    updateMetadata(metadata)
+    noUserChanges = metadata == @md
+    # now apply changes to real metadata
+    updateMetadata(@md) unless noUserChanges
+    # update selection
     @selection = Array.new #reset the array
     (1..@disc.audiotracks).each do |track|
-      @md.setTrackname(track, @trackEntryArray[track-1].text)
-      @md.setVarArtist(track, @varArtistEntryArray[track-1].text) if @md.various?
       @selection << track if @checkTrackArray[track-1].active?
     end
+    # trigger freedb record save to local cache
+    @disc.save unless noUserChanges 
   end
   
   private
@@ -284,6 +286,20 @@ class GtkDisc
     @trackInfoTable.show_all()
   end
   
+  def updateMetadata(metadata)
+    metadata.artist = @artistEntry.text
+    metadata.album = @albumEntry.text
+    metadata.genre = @genreEntry.text
+    metadata.year = @yearEntry.text if @yearEntry.text.to_i != 0
+    metadata.discNumber = @discNumberSpin.value.to_i if @freezeCheckbox.active?
+    metadata.discid = @disc.freedbDiscid
+
+    (1..@disc.audiotracks).each do |track|
+      metadata.setTrackname(track, @trackEntryArray[track-1].text)
+      metadata.setVarArtist(track, @varArtistEntryArray[track-1].text) if @md.various?
+    end
+  end
+
   # update the view for various artists
   def setVarArtist()
     return true if @md.various?
