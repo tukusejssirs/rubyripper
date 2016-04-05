@@ -35,7 +35,7 @@ describe Freedb do
       category = 'Jazz'
       discid = 'a56b3400'
       expect(generator).to receive(:generate).with(disc).and_return(freedbRecord)
-      expect(save).to receive(:save).with(freedbRecord, category, discid)
+      expect(save).to receive(:save).with(freedbRecord, category, discid, true)
       expect(md).to receive(:genre).and_return(category)
       expect(disc).to receive(:freedbDiscid).and_return(discid)
 
