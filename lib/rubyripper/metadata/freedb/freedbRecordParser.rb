@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 #    Rubyripper - A secure ripper for Linux/BSD/OSX
 #    Copyright (C) 2007 - 2010 Bouke Woudstra (boukewoudstra@gmail.com)
+#    Copyright (C) 2016 BleskoDev (bleskodev@gmail.com)
 #
 #    This file is part of Rubyripper. Rubyripper is free software: you can
 #    redistribute it and/or modify it under the terms of the GNU General
@@ -19,10 +20,11 @@ require 'rubyripper/metadata/data'
 
 # This class can read and interpret a freedb metadata message
 class FreedbRecordParser
-attr_reader :status, :md
+attr_reader :status, :md, :revision
 
   def initialize(md=nil)
     @md = md ? md : Metadata::Data.new()
+    @revision = 0
   end
 
   # setup actions to analyze the result
@@ -66,7 +68,11 @@ private
     discTitle = String.new
     @freedbRecord.each_line do |line|
       if line[0] == '#'
-        next
+        if line =~ /Revision:/
+          @revision = $'.strip().to_i
+        else
+          next
+        end
       elsif line =~ /DISCID=/
         @md.discid = $'.strip()
       elsif line =~ /DTITLE=/

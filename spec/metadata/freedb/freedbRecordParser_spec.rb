@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 #    Rubyripper - A secure ripper for Linux/BSD/OSX
 #    Copyright (C) 2007 - 2010 Bouke Woudstra (boukewoudstra@gmail.com)
+#    Copyright (C) 2016 BleskoDev (bleskodev@gmail.com)
 #
 #    This file is part of Rubyripper. Rubyripper is free software: you can
 #    redistribute it and/or modify it under the terms of the GNU General
@@ -108,6 +109,30 @@ TTITLE1=Christian Woman".encode('UTF-8')
       expect(parser.status).to eq('ok')
       expect(parser.md.artist).to eq('Artist with a long name')
       expect(parser.md.album).to eq('Album')
+    end
+
+    it "should parse revision value" do
+      record = "# Disc length: \n#\n# Revision: 12\n# Submitted via: \n".encode('UTF-8')
+      parser.parse(record)
+
+      expect(parser.status).to eq('ok')
+      expect(parser.revision).to eq(12)
+    end
+
+    it "should ignore invalid revision value" do
+      record = "# Revision: \n".encode('UTF-8')
+      parser.parse(record)
+
+      expect(parser.status).to eq('ok')
+      expect(parser.revision).to eq(0)
+    end
+
+    it "should ignore non number revision value" do
+      record = "# Revision: jojo\n".encode('UTF-8')
+      parser.parse(record)
+
+      expect(parser.status).to eq('ok')
+      expect(parser.revision).to eq(0)
     end
 
     context "When a various artist disc is expected" do
