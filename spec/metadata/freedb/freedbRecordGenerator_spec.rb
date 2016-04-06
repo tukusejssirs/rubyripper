@@ -76,7 +76,7 @@ describe FreedbRecordGenerator do
 #\n\
 # Disc length: 2540 seconds\n\
 #\n\
-# Revision: 1\n\
+# Revision: 5\n\
 # Submitted via: rubyripper v0.7\n\
 #\n\
 DISCID=6e09ea08\n\
@@ -106,7 +106,7 @@ PLAYORDER=\n".encode('UTF-8')
       expect(md).to receive(:artist).and_return('Paco de Lucia')
       expect(md).to receive(:various?).exactly(8).times.and_return(false)
 
-      expect(generator.generate(disc)).to eq(expected_record)
+      expect(generator.generate(disc, 5)).to eq(expected_record)
     end
 
 

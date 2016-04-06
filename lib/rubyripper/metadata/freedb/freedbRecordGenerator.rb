@@ -25,7 +25,7 @@ class FreedbRecordGenerator
   def initialize
   end
 
-  def generate(disc)
+  def generate(disc, revision=1)
     # currently handle only standard discs (no varius artists)
     md = disc.metadata
     track_count = disc.audiotracks
@@ -45,7 +45,7 @@ class FreedbRecordGenerator
     result << "# Disc length: #{disc_length} seconds\n" 
     result << "#\n"
     # revision and client 
-    result << "# Revision: 1\n"
+    result << "# Revision: #{revision}\n"
     result << "# Submitted via: rubyripper v0.7\n"
     result << "#\n"
     # disc info

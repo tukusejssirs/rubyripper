@@ -56,7 +56,7 @@ class Freedb
 
   # convert metadata content to freedb record and save it localy
   def save()
-    freedbRecord = @generator.generate(@disc)
+    freedbRecord = @generator.generate(@disc, @parser.revision + 1)
     @save.save(freedbRecord, @md.genre,@disc.freedbDiscid, force=true)
   end
 
