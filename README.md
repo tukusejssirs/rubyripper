@@ -104,8 +104,7 @@ weird results with freedb fetching, use your other cdrom drive.
 A cdparanoia port for MacOS that supports the -d switch can be found here:
 http://sourceforge.net/project/showfiles.php?group_id=158413
 
-For MacOS on x86 systems cd-discid is not working (ppc does), but discid is:
-website => http://discid.sourceforge.net/
+For MacOS on x86 systems cd-discid is not working (ppc does), [but discid is](http://discid.sourceforge.net/)
 You can also test the fallback code for creating the discid ourselves,
 but it may not work on audio-cd's with a data track.
 
@@ -113,35 +112,29 @@ but it may not work on audio-cd's with a data track.
 # FAQ<a name="FAQ"></a>
 
 **Q :** Why does the last track go slower than the rest?
-
 **A :** Chances are that you've supplied an offset different than 0 and supplied the
 option -Z to cdparanoia. A cdparanoia bug prevents finishing ripping the last
 track if -Z is supplied, so it's automatically removed for the last track.
 
 **Q :** Will Rubyripper work on any platform other than linux?
-
 **A :** If the same dependencies are available on these platforms, then things will
 probably just work fine. If some of the dependencies are missing, but you do
 know one other utility which does just about the same, please report a
 feature request at the Google bugtracker.
 
 **Q :** How do I report a bug / request a missing feature?
-
 **A :** Go to http://code.google.com/p/rubyripper/issues/list. The Rubyripper
 developer will typically respond within one week. You can add your e-mail,
 so any changes or updates in the bug will be send to you.
 
 **Q :** How do I get the very latest code (I don't care how many bugs there are)?
-
 **A :** Using git. See the wiki for instructions.
 
 **Q :** My buttons don't react and give the following error in a terminal:
 warning: GRClosure invoking callback: already destroyed Callback error
-
 **A :** Upgrade your ruby gtk bindings to a >=0.16.* version.
 
 **Q :** How can I help translate rubyripper to my language?
-
 **A :** See the wiki for instructions
 
 
