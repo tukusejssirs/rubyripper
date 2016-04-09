@@ -1,9 +1,9 @@
 * [Introduction](#Introduction)
-* [Secure rip method](#Secure-rip)
+* [Secure rip method](#Secure-rip-method)
 * [How to install](#How-to-install)
   * [MacOS Support](#MacOS-support)
 * [FAQ](#FAQ)
-* [Revelant URLs](#Revelant-urls)
+* [Revelant URLs](#Relevant-urls)
 * [Running all tests](#Running-all-tests)
 
 
@@ -16,7 +16,7 @@ line interface.
 
 Some of it's main features:
 * graphical (gtk2) and command line interface
-* a [secure rip method](#Secure-rip)
+* a [secure rip method](#Secure-rip-method)
 * editable freedb tag fetching
 * flac, vorbis, mp3, wav support
 * any other codec by passing the command
