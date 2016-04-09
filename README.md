@@ -3,7 +3,6 @@
 * [How to install](#How-to-install)
   * [MacOS Support](#MacOS-support)
 * [FAQ](#FAQ)
-* [Revelant URLs](#Relevant-urls)
 * [Running all tests](#Running-all-tests)
 
 
