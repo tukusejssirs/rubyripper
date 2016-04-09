@@ -76,13 +76,17 @@ Suggested:
 * cdrdao (for advanced toc analysis)
 
 Run from directory:
-`./bin/rubyripper_gtk2` or `./bin/rubyripper_cli`
+<pre>
+./bin/rubyripper_gtk2 or 
+./bin/rubyripper_cli
+</pre>
 
 To install:
-`./configure --enable-lang-all --enable-gtk2 --enable-cli --prefix=/usr` or
-`./configure --enable-lang=de,hu --enable-gtk2 --enable-cli --prefix=/usr`
-
-and then: `make install`
+<pre>
+./configure --enable-lang-all --enable-gtk2 --enable-cli --prefix=/usr or
+./configure --enable-lang=de,hu --enable-gtk2 --enable-cli --prefix=/usr
+make install
+</pre>
 
 The executables will be named `rrip_cli` and `rrip_gui`
 
