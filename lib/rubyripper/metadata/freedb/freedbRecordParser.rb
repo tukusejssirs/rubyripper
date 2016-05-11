@@ -91,12 +91,11 @@ private
     @md.artist, @md.album = discTitle.split(/\s\/\s/)
   end
 
-   # if multiple rows can occur add a space again before the 2nd line
   def addValue(var, value)
     if var == nil || var.empty?
       var = value
     else
-      var = "#{var} #{value}"
+      var = "#{var}#{value}"
     end
   end
 

@@ -85,16 +85,16 @@ TTITLE1=Christian Woman".encode('UTF-8')
       expect(parser.md.extraDiscInfo).to eq('What a wonderfull show!')
     end
 
-    it "should recognize a trackname of two lines and add a space in between" do
+    it "should recognize a trackname of two lines and correctly concatenate them" do
       record = "TTITLE9=Part1\nTTITLE9=Part2".encode('UTF-8')
       parser.parse(record)
 
       expect(parser.status).to eq('ok')
-      expect(parser.md.trackname(10)).to eq('Part1 Part2')
+      expect(parser.md.trackname(10)).to eq('Part1Part2')
     end
 
     it "should recognize the album if the title has two lines" do
-      record = "DTITLE=Artist / Album\nDTITLE=with a longer name".encode('UTF-8')
+      record = "DTITLE=Artist / Album wi\nDTITLE=th a longer name".encode('UTF-8')
       parser.parse(record)
 
       expect(parser.status).to eq('ok')
@@ -103,7 +103,7 @@ TTITLE1=Christian Woman".encode('UTF-8')
     end
 
     it "should recognize the artist if it spins two lines as well" do
-      record = "DTITLE=Artist\nDTITLE=with a long name / Album".encode('UTF-8')
+      record = "DTITLE=Artist wi\nDTITLE=th a long name / Album".encode('UTF-8')
       parser.parse(record)
 
       expect(parser.status).to eq('ok')
