@@ -302,7 +302,6 @@ class GtkDisc
 
   # update the view for various artists
   def setVarArtist()
-    return true if @md.various?
     @md.markVarArtist()
     @disc.audiotracks.times{|index| @varArtistEntryArray[index].text = @md.getVarArtist(index + 1)}
     @disc.audiotracks.times{|index| @trackEntryArray[index].text = @md.trackname(index + 1)}
@@ -311,7 +310,6 @@ class GtkDisc
 
   # update the view for normal artists
   def unsetVarArtist()
-    return true unless @md.various?
     @md.unmarkVarArtist()
     @disc.audiotracks.times{|index| @trackEntryArray[index].text = @md.trackname(index + 1)}
     updateTracksView()
