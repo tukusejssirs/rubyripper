@@ -260,6 +260,7 @@ class GtkDisc
 
     @scrolledWindow.add_with_viewport(@trackInfoTable)
     @frame20.add(@scrolledWindow)
+    @trackInfoTable.focus_vadjustment = @scrolledWindow.vadjustment
 
     @display.pack_start(@frame10, false, false)
     @display.pack_start(@frame20, true, true)
