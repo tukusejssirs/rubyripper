@@ -140,15 +140,17 @@ private
       worseThan[release.attribute('id')] = 0
       releasesById[release.attribute('id')] = release
       if filterByCountry != :never
-        if release.elements['date'].length > 0
-          filterByCountry[release.elements['country'].text] << release.attribute('id')
+        countryElement = release.elements['country']
+        if countryElement && countryElement.length
+          filterByCountry[countryElement.text] << release.attribute('id')
         else
           filterByCountry[nil] << release.attribute('id')
         end
       end
       if filterByDate != :never
-        if release.elements['date'].length > 0
-          filterByDate[release.elements['date'].text] << release.attribute('id')
+        dateElement = release.elements['date']
+        if dateElement && dateElement.length > 0
+          filterByDate[dateElement.text] << release.attribute('id')
         else
           filterByDate[nil] << release.attribute('id')
         end

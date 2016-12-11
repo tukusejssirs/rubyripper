@@ -175,5 +175,49 @@ describe GetMusicBrainzRelease do
         expect(getMusicBrainz.musicbrainzRelease).to eq(nil)
       end
     end
+
+    context "when multiple records are reported for country preference and some records are missing the date or country element" do
+      before(:each) do
+        allow(prefs).to receive(:preferMusicBrainzCountries).and_return 'AU'
+        allow(prefs).to receive(:preferMusicBrainzDate).and_return 'no'
+        setQueryReply(File.read('spec/metadata/musicbrainz/data/multipleReleasesFound_invalidElements.xml'))
+        getMusicBrainz.queryDisc(@disc)
+        @releaseId = '0923a33a-45c4-3eed-aae8-8b50e1a545de'
+      end
+
+      it "should not crash if date element is not found" do
+        expect(getMusicBrainz.status).to eq('ok')
+        expect(getMusicBrainz.musicbrainzRelease.attributes['id']).to eq(@releaseId)
+        expect(getMusicBrainz.choices.length).to eq(1)
+      end
+
+      it "should not crash if country element is not found" do
+        expect(getMusicBrainz.status).to eq('ok')
+        expect(getMusicBrainz.musicbrainzRelease.attributes['id']).to eq(@releaseId)
+        expect(getMusicBrainz.choices.length).to eq(1)
+      end
+    end
+
+    context "when multiple records are reported for date preference and some records are missing the date or country element" do
+      before(:each) do
+        allow(prefs).to receive(:preferMusicBrainzCountries).and_return ''
+        allow(prefs).to receive(:preferMusicBrainzDate).and_return 'earlier'
+        setQueryReply(File.read('spec/metadata/musicbrainz/data/multipleReleasesFound_invalidElements.xml'))
+        getMusicBrainz.queryDisc(@disc)
+        @releaseId = '6bb3793b-f991-378e-9bff-0bd3117f2298'
+      end
+
+      it "should not crash if date element is not found" do
+        expect(getMusicBrainz.status).to eq('ok')
+        expect(getMusicBrainz.musicbrainzRelease.attributes['id']).to eq(@releaseId)
+        expect(getMusicBrainz.choices.length).to eq(1)
+      end
+
+      it "should not crash if country element is not found" do
+        expect(getMusicBrainz.status).to eq('ok')
+        expect(getMusicBrainz.musicbrainzRelease.attributes['id']).to eq(@releaseId)
+        expect(getMusicBrainz.choices.length).to eq(1)
+      end
+    end
   end
 end
