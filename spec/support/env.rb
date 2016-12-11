@@ -16,6 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 $rr_version = 'test'
+$rr_url = 'https://github.com/bleskodev/rubyripper'
 $run_specs = true
 
 # define a lightweight alternative for translations

@@ -21,6 +21,7 @@ def _(txt)
 end
 
 $rr_version = 'test'
+$rr_url = 'https://github.com/bleskodev/rubyripper'
 $test = true
 
 require 'rubyripper/cli/cliGetAnswer'

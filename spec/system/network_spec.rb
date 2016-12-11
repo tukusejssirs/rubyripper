@@ -59,4 +59,12 @@ describe Network do
       expect(network.path).to eq(3)
     end
   end
+
+  context "When setting up a CGI query" do
+    it "should correctly setup User-Agent header field" do
+      query = 'http://freedb.freedb.org/~cddb/cddb.cgi'
+      request = network.configureGetRequest(query)
+      expect(request['User-Agent']).to eq("rubyripper/#{$rr_version} (#{$rr_url})")
+    end
+  end
 end

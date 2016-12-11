@@ -43,12 +43,19 @@ class Network
   # fire up a CGI command to the server
   def get(query)
     puts "DEBUG: CGI query: #{'http://' +  @host + query}" if @prefs.debug
-    @connection.get(query).body
+    @connection.request(configureGetRequest(query)).body
   end
   
   # encode for a specific protocol in order to escape certain characters
   def encode(string)
     @cgi.escape(string)
+  end
+
+  # configure correctly user agent field of the GET request header
+  def configureGetRequest(query)
+    request = Net::HTTP::Get.new(query)
+    request['User-Agent'] = "rubyripper/#{$rr_version} (#{$rr_url})"
+    return request
   end
 
 private
