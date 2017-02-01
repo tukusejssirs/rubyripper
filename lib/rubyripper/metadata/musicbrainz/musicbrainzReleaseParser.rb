@@ -151,7 +151,7 @@ private
       artist = String.new
       REXML::XPath::each(track, 'recording/artist-credit/name-credit', {'' => MMD_NAMESPACE}) do |credit|
         if credit.elements['name']
-          @artist << REXML::XPath::first(credit, 'name').text
+          artist << REXML::XPath::first(credit, 'name').text
         else
           artist << REXML::XPath::first(credit, 'artist/name').text
         end
