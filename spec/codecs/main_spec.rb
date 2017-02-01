@@ -61,6 +61,7 @@ describe Codecs::Main do
       
       it "should be able to generate the basic command" do
         expect(md).to receive(:various?).and_return nil
+        expect(md).to receive(:discNumber).and_return nil
         expect(disc).to receive(:freedbDiscid).and_return nil
 
         expect(@codec.command(1)).to eq('lame -V 2 --ta "trackArtist 1" --tl "album" '\
@@ -71,6 +72,7 @@ describe Codecs::Main do
       
       it "should add the various artist tag if relevant" do
         expect(md).to receive(:various?).and_return true
+        expect(md).to receive(:discNumber).and_return nil
         expect(disc).to receive(:freedbDiscid).and_return nil
         
         expect(@codec.command(1)).to eq('lame -V 2 --ta "trackArtist 1" --tl "album" '\
@@ -80,6 +82,7 @@ describe Codecs::Main do
       
       it "should add the discid if available" do
         expect(md).to receive(:various?).and_return nil
+        expect(md).to receive(:discNumber).and_return nil
         expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
         
         expect(@codec.command(1)).to eq('lame -V 2 --ta "trackArtist 1" --tl "album" '\
@@ -89,7 +92,7 @@ describe Codecs::Main do
       
       it "should add the discnumber if available" do
         expect(md).to receive(:various?).and_return nil
-        expect(md).to receive(:discNumber).twice.and_return "1"
+        expect(md).to receive(:discNumber).twice.and_return 1
         expect(disc).to receive(:freedbDiscid).and_return nil
         
         expect(@codec.command(1)).to eq('lame -V 2 --ta "trackArtist 1" --tl "album" '\
@@ -121,7 +124,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('vorbis', 1).and_return '/home/vorbis/1-test.ogg'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('oggenc -o "/home/vorbis/1-test.ogg" -q 6 -c '\
@@ -154,7 +157,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('flac', 1).and_return '/home/flac/1-test.flac'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('flac -o "/home/flac/1-test.flac" -q 6 --tag '\
@@ -175,7 +178,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('flac', 1).and_return '/home/flac/1-test.flac'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('flac -o "/home/flac/1-test.flac" -q 6 --tag '\
@@ -231,7 +234,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('nero', 1).twice.and_return '/home/nero/1-test.m4a'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('neroAacEnc -q 1 -if "input_1.wav" -of "/home/nero/1-test.m4a"')
@@ -264,7 +267,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('wavpack', 1).and_return '/home/wavpack/1-test.wv'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('wavpack -w ARTIST="trackArtist 1" -w ALBUM="album" '\
@@ -287,7 +290,7 @@ describe Codecs::Main do
       expect(scheme).to receive(:getFile).with('opus', 1).and_return '/home/opus/1-test.opus'
       expect(disc).to receive(:audiotracks).and_return 99
       expect(md).to receive(:various?).and_return true
-      expect(md).to receive(:discNumber).twice.and_return "1"
+      expect(md).to receive(:discNumber).twice.and_return 1
       expect(disc).to receive(:freedbDiscid).twice.and_return 'ABCDEFGH'
       
       expect(@codec.command(1)).to eq('opusenc --bitrate 160 --artist "trackArtist 1" --comment ALBUM="album" '\
