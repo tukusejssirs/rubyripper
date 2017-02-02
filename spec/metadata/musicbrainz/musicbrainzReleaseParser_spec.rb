@@ -66,6 +66,19 @@ describe MusicBrainzReleaseParser do
       expect(parser.md.trackname(2)).to eq('Something')
     end
 
+    it "should not crash when parsing incomplete standard info" do
+      parser.parse(readRelease('spec/metadata/musicbrainz/data/standardRelease_incomplete.xml'),
+                   '4vi.H1hC7BRP18_a.7D4r4NOYL8-', 'e50b3c11')
+
+      expect(parser.status).to eq('ok')
+      expect(parser.md.discid).to eq('e50b3c11')
+      expect(parser.md.artist).to eq('')
+      expect(parser.md.album).to eq('Unknown')
+      expect(parser.md.year).to eq('0')
+      expect(parser.md.trackname(1)).to eq('Unknown title')
+      expect(parser.md.trackname(2)).to eq('Something')
+    end
+
     it "should pick the correct disc of a multi-disc release" do
       parser.parse(readRelease('spec/metadata/musicbrainz/data/multiDiscRelease.xml'),
                    '0gLvTHxPtWugkT0Pf26t5Bjo0GQ-', 'b20b140d')
@@ -86,6 +99,15 @@ describe MusicBrainzReleaseParser do
 
       expect(parser.status).to eq('ok')
       expect(parser.md.year).to eq('1969')
+    end
+
+    it "should not crash if set to use the earliest release date but data is incomplete" do
+      allow(prefs).to receive(:useEarliestDate).and_return true
+      parser.parse(readRelease('spec/metadata/musicbrainz/data/standardRelease_incomplete.xml'),
+                   '4vi.H1hC7BRP18_a.7D4r4NOYL8-', 'e50b3c11')
+
+      expect(parser.status).to eq('ok')
+      expect(parser.md.year).to eq('0')
     end
 
     it "should never behave like a various artists disc if there is only one (non-Various Artists) album artist" do

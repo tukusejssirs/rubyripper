@@ -117,9 +117,9 @@ private
     numArtists = 0
     variousArtists = false
     REXML::XPath::each(@musicbrainzRelease, 'artist-credit/name-credit', {'' => MMD_NAMESPACE}) do |credit|
-      if credit.elements['name']
+      if credit.elements['name'] and credit.elements['name'].text
         @md.artist << REXML::XPath::first(credit, 'name').text
-      else
+      elsif credit.elements['artist/name'] and credit.elements['artist/name'].text
         @md.artist << REXML::XPath::first(credit, 'artist/name').text
       end
       # ' / ' is default separator
@@ -130,12 +130,14 @@ private
       end
     end
     @md.artist = @md.artist[0..-4]
-    @md.album = @musicbrainzRelease.elements['title'].text
+    if @musicbrainzRelease.elements['title'] and @musicbrainzRelease.elements['title'].text
+      @md.album = @musicbrainzRelease.elements['title'].text
+    end
     # For now, only allow the year.
-    if @prefs.useEarliestDate
+    if @prefs.useEarliestDate and @musicbrainzRelease.elements['release-group/first-release-date'] and @musicbrainzRelease.elements['release-group/first-release-date'].text
       # inc=release-groups gives us the earliest date for free!
       @md.year = @musicbrainzRelease.elements['release-group/first-release-date'].text[0..3]
-    else
+    elsif @musicbrainzRelease.elements['date'] and @musicbrainzRelease.elements['date'].text
       @md.year = @musicbrainzRelease.elements['date'].text[0..3]
     end
     # @md.genre is tricky to do at best (since all we have to go on
@@ -146,13 +148,17 @@ private
     varArtist = {}
     # We only need tracks on the disc matching our discid.
     REXML::XPath::each(@musicbrainzRelease, "medium-list/medium/disc-list/disc[@id='#{@musicbrainzDiscid}']/../../track-list/track", {'' => MMD_NAMESPACE}) do |track|
-      @md.tracklist[track.elements['position'].text.to_i] = track.elements['recording/title'].text
+      if track.elements['recording/title'] and track.elements['recording/title'].text
+        @md.tracklist[track.elements['position'].text.to_i] = track.elements['recording/title'].text
+      else
+        @md.tracklist[track.elements['position'].text.to_i] = 'Unknown title'
+      end
       # @md.varArtist depends on whether or not every track has the same artist (not Various Artists, because we also have to include splits)
       artist = String.new
       REXML::XPath::each(track, 'recording/artist-credit/name-credit', {'' => MMD_NAMESPACE}) do |credit|
-        if credit.elements['name']
+        if credit.elements['name'] and credit.elements['name'].text
           artist << REXML::XPath::first(credit, 'name').text
-        else
+        elsif credit.elements['artist/name'] and credit.elements['artist/name'].text
           artist << REXML::XPath::first(credit, 'artist/name').text
         end
         # ' / ' is default separator
