@@ -48,7 +48,7 @@ module Metadata
     def method_missing(name, *args)
       item = @md.send(name, *args)
       if item.class == String
-        filter(item)
+        filter(item.dup)
       else
         item
       end

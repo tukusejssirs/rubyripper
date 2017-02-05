@@ -87,7 +87,7 @@ class FileScheme
 
   # return the toc file of Cdrdao class // TODO this can't be; the dir is not yet created.
   def getTocFile
-    File.join(getTempDir(), "#{@filterFiles.artist} - #{@filterFiles.album}.toc")
+    File.join(getTempDir(), @filterFiles.filter("#{@md.artist} - #{@md.album}.toc"))
   end
 
   # return the full filename of the log
@@ -97,7 +97,7 @@ class FileScheme
 
   # return the full filename of the cuesheet
   def getCueFile(codec)
-    File.join(@dir[codec], "#{@filterFiles.artist} - #{@filterFiles.album} (#{codec}).cue")
+    File.join(@dir[codec], @filterFiles.filter("#{@md.artist} - #{@md.album} (#{codec}).cue"))
   end
 
   # return the just ripped wave file
@@ -275,7 +275,7 @@ class FileScheme
   def createPlaylists
     @prefs.codecs.each do |codec|
       if @prefs.playlist && !@prefs.image
-        filename = File.join(@dir[codec], "#{@filterFiles.artist} - #{@filterFiles.album} (#{codec}).m3u")
+        filename = File.join(@dir[codec], @filterFiles.filter("#{@md.artist} - #{@md.album} (#{codec}).m3u"))
         content = String.new
         @trackSelection.each{|track| content << @files[codec][track] + "\n"}
         @file.write(filename, content, false)
