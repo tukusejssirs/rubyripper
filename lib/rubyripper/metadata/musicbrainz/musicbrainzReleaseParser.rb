@@ -23,7 +23,7 @@ require 'rubyripper/system/network'
 class MusicBrainzReleaseParser
 attr_reader :status, :md
 
-  WEB_SERVICE_BASE_URI = 'http://musicbrainz.org/ws/2/'
+  WEB_SERVICE_BASE_URI = 'https://musicbrainz.org/ws/2/'
   VARIOUS_ARTISTS_ID = '89ad4ac3-39f7-470e-963a-56509c546377'
   MMD_NAMESPACE = 'http://musicbrainz.org/ns/mmd-2.0#'
 

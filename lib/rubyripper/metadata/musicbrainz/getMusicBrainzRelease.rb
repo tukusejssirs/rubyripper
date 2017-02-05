@@ -30,7 +30,7 @@ require 'cgi'
 class GetMusicBrainzRelease
   attr_reader :status, :musicbrainzRelease, :choices
 
-  WEB_SERVICE_BASE_URI = 'http://musicbrainz.org/ws/2/'
+  WEB_SERVICE_BASE_URI = 'https://musicbrainz.org/ws/2/'
   MMD_NAMESPACE = 'http://musicbrainz.org/ns/mmd-2.0#'
 
   def initialize(network=nil, prefs=nil)

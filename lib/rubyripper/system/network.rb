@@ -42,7 +42,7 @@ class Network
 
   # fire up a CGI command to the server
   def get(query)
-    puts "DEBUG: CGI query: #{'http://' +  @host + query}" if @prefs.debug
+    puts "DEBUG: CGI query: #{@url.scheme + '://' +  @url.host + query}" if @prefs.debug
     @connection.request(configureGetRequest(query)).body
   end
   
@@ -61,16 +61,16 @@ class Network
 private
   # first configure the connection (with proxy if needed)
   def configureCgiConnection(website)
-    url = @uri.parse(website)
-    @host = url.host
-    @path = url.path
+    @url = @uri.parse(website)
+    @path = @url.path
 
     if @deps.env('http_proxy')
       proxy = @uri.parse(@deps.env('http_proxy'))
-      @connection = @http.new(@host, url.port, proxy.host,
+      @connection = @http.new(@url.host, @url.port, proxy.host,
       proxy.port, proxy.user, proxy.password ? @cgi.unescape(proxy.password) : '')
     else
-      @connection = @http.new(@host, url.port)
+      @connection = @http.new(@url.host, @url.port)
     end
+    @connection.use_ssl = @url.scheme == 'https'
   end
 end
