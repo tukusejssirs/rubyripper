@@ -6,3 +6,4 @@ GenericName[nl]=Veilige Audio CD Ripper
 Icon=rubyripper
 Exec=rrip_gui
 Categories=Audio;AudioVideo;
+Keywords=Audio;Music;CD;Rip;Ripper;Disc;Disk;MP3;FLAC;Vorbis;Ogg;WAV;Transcode;Convert;
