@@ -38,18 +38,7 @@ $BINDIR='/bin'
 $LOCALE='/share/locale'
 $ICONDIR='/share/icons/hicolor/128x128/apps'
 $DESKTOP='/share/applications'
-$RUBYDIR= '/lib/rubyripper' #in case site_ruby doesn't return any matches
-
-$:.each do |ruby_dir|
-  if ruby_dir.include?("site_ruby")
-    if ruby_dir[0..3] == "/usr"
-      $RUBYDIR = ruby_dir[4..-1] # '/usr' is prepended by $PREFIX later
-    else
-      $RUBYDIR = ruby_dir
-    end
-    break
-  end
-end
+$RUBYDIR= '/lib/rubyripper'
 
 if RUBY_PLATFORM.include?('darwin')
   $INSTALL = 'install'
@@ -60,7 +49,7 @@ end
 $GTK2 = false
 $CLI = false
 $LANG = []
-$LANG_SUPPORT = ["nl", "de", "fr", "hu", "ru", "es", "se", "bg", "it"]
+$LANG_SUPPORT = ["nl", "de", "fr", "hu", "ru", "es", "se", "bg", "it", "da"]
 
 ##################################
 # START SOME DEPENDENCY CHECKING #
@@ -72,8 +61,8 @@ require 'rubyripper/base'
 require 'rubyripper/system/dependency'
 
 begin
-#  require 'gettext/utils'
   require 'gettext/tools'
+  require 'gettext/tools/task'
 rescue LoadError
   puts "Could not import gettext; skip language support..."
   $LANG_SUPPORT = []
@@ -86,11 +75,6 @@ end
 if ARGV.include?('--help') || ARGV.include?('-h') || ARGV.length == 0
   puts ""
   puts "--prefix=<destination_dir>  (default: #{$PREFIX})"
-  puts "--bindir=<bin_dir>  (default: #{$BINDIR})"
-  puts "--locale=<locale_dir>  (default: #{$LOCALE})"
-  puts "--icondir=<icon_theme_dir>  (default: #{$ICONDIR})"
-  puts "--desktop=<desktop_dir>  (default: #{$DESKTOP})"
-  puts "--ruby=<ruby_dir>  (default: #{$RUBYDIR})"
   puts ""
   puts "--enable-gtk2  (install the gtk2 frontend)"
   puts "--enable-cli  (install the cli frontend)"
@@ -100,7 +84,6 @@ if ARGV.include?('--help') || ARGV.include?('-h') || ARGV.length == 0
   puts "LANGUAGE SUPPORT"
   puts "--update-po (updates all po translation files, input = source code)"
   puts "--update-mo (update all binary translation files, input = po files)"
-#  puts "--update-lib (resets file locations in ruby files)"
   puts ""
   exit()
 end
@@ -110,105 +93,37 @@ end
 # Update the mo-files (binary)               #
 # The mo files are created from the Makefile #
 ##############################################
-
 def update_po
   if ($LANG_SUPPORT.size != 0)
-    begin
-      GetText.update_pofiles("rubyripper", Dir.glob("lib/**/*.rb") +
-        Dir.glob("bin/*"), "Rubyripper #{$rr_version}")
-    rescue Exception => e
-      puts "\n", '*' * 80, "\n"
-      puts e.backtrace
-      puts e.message
-      puts "\n", '*' * 80, "\n"
-      puts "Unfortunately ruby-gettext crashed at updating the po file."
-      puts "This is a known issue with ruby-1.9 and ruby-gettext."
-      puts "See also issue 400 at http://code.google.com/p/rubyripper."
-      puts "For official releases the po files are already updated."
-      puts "\n", '*' * 80, "\n"
+    updatePoAndMoTask = GetText::Tools::Task.define do |task|
+      task.domain = 'rubyripper'
+      task.files = Dir.glob("lib/**/*.rb") + Dir.glob("bin/*")
+      task.package_name = 'Rubyripper'
+      task.package_version = '#{$rr_version}'
     end
-    update_mo()
+    updatePoAndMoTask.invoke
   end
 end
 
 def update_mo
-  GetText.create_mofiles()
+  updateMoTask = GetText::Tools::Task.define do |task|
+    task.domain = 'rubyripper'
+    task.files = Dir.glob("lib/**/*.rb") + Dir.glob("bin/*")
+    task.package_name = 'Rubyripper'
+    task.package_version = '#{$rr_version}'
+    task.enable_po = false
+  end
+  updateMoTask.invoke
 end
 
 def check_deps
-  puts "Checking the NEEDED dependencies...."
-
-  installed('cdparanoia') ? puts("cdparanoia found...") : puts("cdparanoia NOT found")
-
-  puts "\nChecking the OPTIONAL dependencies..."
-
-  puts "Testing support for the graphical frontend..."
-
-  begin
-    require 'gtk2'
-    puts "ruby-gtk2 bindings found"
-  rescue LoadError
-    puts "ruby-gtk2 is not found. The graphical frontend won't work!"
-  rescue
-    # see issue 514
-    puts "Warning: ruby-gtk2 is not working in your current environment."
-  end
-
-  puts "\nTesting support for freedb metadata fetching..."
-  (installed('cd-discid') || installed('discid')) ? puts("cd-discid or discid found...") : puts("Neither cd-discid or discid could be found.")
-
-  puts "\nTesting support for ejecting the disk tray..."
-  (installed('eject') || installed('diskutil')) ? puts("eject or disktutil found...") : puts("Neither eject or disktutil could be found.")
-  
-  puts "\nTesting support for different codecs on your system..."
-  installed('flac') ? puts("flac found...") : puts("flac NOT found.")
-  installed('oggenc') ? puts("oggenc (vorbis) found...") : puts("oggenc (vorbis) NOT found.")
-  installed('lame') ? puts("lame (mp3) found...") : puts("lame (mp3) NOT found.")
-
-  puts "\nTesting support for replaygain..."
-  installed('wavegain') ? puts("wavegain found...") : puts("wavegain NOT found.")
-  installed('vorbisgain') ? puts("vorbisgain found...") : puts("vorbisgain NOT found.")
-  installed('mp3gain') ? puts("mp3gain found...") : puts("mp3gain NOT found.")
-
-  puts "\nTesting support for normalize..."
-  installed('normalize') ? puts("normalize found...") : puts("normalize NOT found")
-end
-
-def update_lib
-  ['rr_lib.rb', 'rubyripper_gtk2.rb', 'rubyripper_cli.rb'].each do |filename|
-    file = File.readlines(filename)
-    index = 0
-    file.each do |line|
-      if line =~ /LOCALE=/
-        file[index] = "LOCALE=[ENV['PWD'] + \"/locale\", \"#{$PREFIX + $LOCALE}\"]"
-        break
-      elsif line =~ /ICONDIR=/
-        file[index] = "ICONDIR=[ENV['PWD'], \"#{$PREFIX + $ICONDIR}\"]"
-      elsif line =~ /RUBYDIR=/
-        file[index] = "RUBYDIR=[ENV['PWD'], File.dirname(__FILE__), \"#{$PREFIX + $RUBYDIR}\"]"
-        break
-      end
-      index += 1
-    end
-    outputfile = File.open(filename, "w+")
-    file.each{|line| outputfile.puts line}
-    outputfile.close()
-  end
+  deps = Dependency.instance
+  deps.verify(true, false)
 end
 
 ARGV.each do |argument|
   if argument[0,9] == "--prefix="
     $PREFIX = argument[9..-1]
-  elsif argument[0,9] == "--bindir="
-    $BINDIR = argument[9..-1]
-  elsif argument[0,9] == "--locale="
-    $LOCALE = argument[9..-1]
-  elsif argument[0,10] == "--icondir="
-    $ICONDIR = argument[10..-1]
-  elsif argument[0,10] == "--desktop="
-    $DESKTOP = argument[10..-1]
-  elsif argument[0,7] == "--ruby="
-    $RUBYDIR = argument[7..-1]
   elsif argument == '--enable-gtk2'
     $GTK2 = true
   elsif argument == '--enable-cli'
@@ -221,9 +136,6 @@ ARGV.each do |argument|
     update_po()
   elsif argument == "--update-mo"
     update_mo()
-  elsif argument == "--update-lib"
-# TODO    update_lib()
-    exit()
   end
 end
 
@@ -233,10 +145,6 @@ unless ($GTK2 || $CLI)
   exit()
 end
 
-puts "The configure script has to be updated for the 0.7.0 release."
-puts "Please use the stable branch if you want to install rubyripper: git checkout stable"
-puts "You can also run rubyripper directly without installing: ./bin/rubyripper_cli"
-raise "CONFIG SCRIPT NOT READY FOR INSTALL"
 check_deps()
 
 puts "Creating the Makefile..."
@@ -253,16 +161,18 @@ makefile.puts "all:"
 makefile.puts "\truby configure --update-mo #update the locale files"
 makefile.puts ""
 makefile.puts "install: all"
-makefile.puts "\t#{$INSTALL} -m 644 rr_lib.rb $(prefix)$(DESTDIR)$(RUBYDIR)/rr_lib.rb"
+Dir.glob("#{$RUBYDIR[1..-1]}/**/*.rb").each do |file|
+  makefile.puts "\t#{$INSTALL} -m 644 #{file} $(prefix)$(DESTDIR)#{$PREFIX}/#{file}"
+end
 
 if $GTK2
-  makefile.puts "\t#{$INSTALL} -m 755 rubyripper_gtk2.rb $(prefix)$(DESTDIR)$(BINDIR)/rrip_gui"
-  makefile.puts "\t#{$INSTALL} -m 644 rubyripper.png $(prefix)$(DESTDIR)$(ICONDIR)/rubyripper.png"
-  makefile.puts "\t#{$INSTALL} -m 644 rubyripper.desktop $(prefix)$(DESTDIR)$(DESKTOP)/rubyripper.desktop"
+  makefile.puts "\t#{$INSTALL} -m 755 bin/rubyripper_gtk2 $(prefix)$(DESTDIR)$(BINDIR)/rrip_gui"
+  makefile.puts "\t#{$INSTALL} -m 644 #{$ICONDIR[1..-1]}/rubyripper.png $(prefix)$(DESTDIR)$(ICONDIR)/rubyripper.png"
+  makefile.puts "\t#{$INSTALL} -m 644 #{$DESKTOP[1..-1]}/rubyripper.desktop $(prefix)$(DESTDIR)$(DESKTOP)/rubyripper.desktop"
 end
 
 if $CLI
-  makefile.puts "\t#{$INSTALL} -m 755 -D rubyripper_cli.rb $(prefix)$(DESTDIR)$(BINDIR)/rrip_cli"
+  makefile.puts "\t#{$INSTALL} -m 755 -D bin/rubyripper_cli $(prefix)$(DESTDIR)$(BINDIR)/rrip_cli"
 end
 
 $LANG.each do |lang|
@@ -271,31 +181,33 @@ end
 
 makefile.puts ""
 makefile.puts "uninstall:"
-makefile.puts "\trm $(prefix)$(DESTDIR)$(RUBYDIR)/rr_lib.rb"
+makefile.puts "\trm -rf $(prefix)$(DESTDIR)$(RUBYDIR)"
 
 if $GTK2
-  makefile.puts "\trm $(prefix)$(DESTDIR)$(BINDIR)/rrip_gui"
-  makefile.puts "\trm $(prefix)$(DESTDIR)$(ICONDIR)/rubyripper.png"
-  makefile.puts "\trm $(prefix)$(DESTDIR)$(DESKTOP)/rubyripper.desktop"
-  makefile.puts "\tgtk-update-icon-cache #{$PREFIX}#{$DESTDIR}#{$ICONDIR}"
+  makefile.puts "\trm -f $(prefix)$(DESTDIR)$(BINDIR)/rrip_gui"
+  makefile.puts "\trm -f $(prefix)$(DESTDIR)$(ICONDIR)/rubyripper.png"
+  makefile.puts "\trm -f $(prefix)$(DESTDIR)$(DESKTOP)/rubyripper.desktop"
+  makefile.puts "\tgtk-update-icon-cache -t $(prefix)$(DESTDIR)$(ICONDIR)"
 end
 
 if $CLI
-  makefile.puts "\trm $(prefix)$(DESTDIR)$(BINDIR)/rrip_cli"
+  makefile.puts "\trm -f $(prefix)$(DESTDIR)$(BINDIR)/rrip_cli"
 end
 
 $LANG.each do |lang|
-  makefile.puts "\trm $(prefix)$(DESTDIR)$(LOCALE)/#{lang}/LC_MESSAGES/rubyripper.mo"
+  makefile.puts "\trm -f $(prefix)$(DESTDIR)$(LOCALE)/#{lang}/LC_MESSAGES/rubyripper.mo"
 end
 makefile.puts ""
 makefile.puts "clean:"
-makefile.puts "\truby configure --update-lib"
+makefile.puts "\trm -rf locale/"
+$LANG.each do |lang|
+  makefile.puts "\trm -f po/#{lang}/rubyripper.edit.po"
+  makefile.puts "\trm -f po/#{lang}/rubyripper.po.time_stamp"
+end
 makefile.puts "\trm Makefile"
 makefile.puts "distclean:"
 makefile.puts ""
 makefile.close
-
-# TODO update_lib() #set file locations in the ruby files
 
 puts "A summary of your settings:"
 puts ""
@@ -304,7 +216,7 @@ puts "* Executables: #{$PREFIX}#{$BINDIR}"
 puts "* Localization files: #{$PREFIX}#{$LOCALE}"
 puts "* Icon file: #{$PREFIX}#{$ICONDIR}"
 puts "* Desktop file: #{$PREFIX}#{$DESKTOP}"
-puts "* Ruby library: #{$PREFIX}#{$RUBYDIR}"
+puts "* Library files: #{$PREFIX}#{$RUBYDIR}"
 puts ""
 
 if $GTK2 == true; puts "Gtk2 frontend will be installed" end
