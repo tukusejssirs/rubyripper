@@ -112,7 +112,7 @@ attr_reader :instances
   
   # find the icon
   def setIconForWindow
-    iconPaths = [File.expand_path('../..', __FILE__), "/usr/local/share/icons/hicolor/128x128/apps"]
+    iconPaths = [File.expand_path('../../share/icons/hicolor/128x128/apps', __FILE__), "/usr/local/share/icons/hicolor/128x128/apps"]
     iconPaths.each do |path|
       if File.exist?(file = File.join(path, 'rubyripper.png'))
         @gtkWindow.icon = Gdk::Pixbuf.new(file)
