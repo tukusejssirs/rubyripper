@@ -1,9 +1,23 @@
+* [Historical note](#Historical-note)
 * [Introduction](#Introduction)
 * [Secure rip method](#Secure-rip-method)
 * [How to install](#How-to-install)
   * [MacOS Support](#MacOS-support)
 * [FAQ](#FAQ)
 * [Running all tests](#Running-all-tests)
+
+
+# Historical note<a name="Historical-note"></a>
+
+This is an unofficial fork of the original Rubyripper from [Google code](https://code.google.com/archive/p/rubyripper/).
+The code was abandoned in 2014 by the original author. I was (and still am)
+a user, and the latest released version (0.6.2) stopped working for me as I
+followed the OS upgrades. The head branch (0.7.0a1) was left by the original
+author in the alpha state. I have forked the code, fixed the problems I was
+aware of and added some small features. 99% of the code is still from the
+original author (boukewoudstra, kudos to him).
+In the current state, the code works for me. I'm fixing reported bugs when
+I have time and energy.
 
 
 # Introduction<a name="Introduction"></a>
@@ -16,7 +30,7 @@ line interface.
 Some of it's main features:
 * graphical (gtk2) and command line interface
 * a [secure rip method](#Secure-rip-method)
-* editable freedb tag fetching
+* editable freedb and musicbrainz tag fetching
 * flac, vorbis, mp3, wav support
 * any other codec by passing the command
 * multiple codec encoding in one run
@@ -120,7 +134,7 @@ track if -Z is supplied, so it's automatically removed for the last track.
 **A :** If the same dependencies are available on these platforms, then things will
 probably just work fine. If some of the dependencies are missing, but you do
 know one other utility which does just about the same, please report a
-feature request at the Google bugtracker.
+feature request at the GitHub bugtracker.
 
 **Q :** How do I report a bug / request a missing feature?
 
