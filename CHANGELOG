@@ -3,6 +3,8 @@
 * massive refactoring and cleanups
 * added lots of unit tests with rspec
 * added a few feature tests with cucumber
+* support for https connection to metadata providers
+* user modified metadata is now saved in localy cached freedb record
 
 ---------0.6.2 RELEASE------
 * fix a crash when error on end of disc
