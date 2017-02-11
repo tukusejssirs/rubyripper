@@ -1,0 +1,197 @@
+---------0.7.0 RELEASE------
+* updated ruby requirement to 1.9
+* massive refactoring and cleanups
+* added lots of unit tests with rspec
+* added a few feature tests with cucumber
+* support for https connection to metadata providers
+* user modified metadata is now saved in localy cached freedb record
+
+---------0.6.2 RELEASE------
+* fix a crash when error on end of disc
+* repair for Ruby-1.9 Net::HTTP updates
+* fix outdated assumptions for gtk binding version
+* backport a fix for separating various artists
+
+---------0.6.1 RELEASE------
+* fix for usage of sox to de-emphasize
+* fix for slow ripping for old ruby (1.8) version
+
+---------0.6.0 RELEASE------
+* many ruby-1.9 fixes
+* get advanced toc scanning with help of cdrdao
+* support for hidden tracks before track 1
+* optionally set how many seconds a hidden track at least must be
+* optionally not rip sectors before track 1 (prevent crashes for some drives)
+* option to either append / prepend pregaps
+* option for pre-emphasis handling
+* fix rips with discs that start with a data track once again
+* all new options result in a correct cuesheet (like EAC)
+* fix the --all CLI option and rename it to --defaults
+* improved aborting a rip
+* better show intention of "overwrite" dir by renaming it
+* better detection of various artist discs
+* cooldown the drive for two minutes after 30 minutes non-stop ripping
+* better handling of incomplete rips of last track due to offsets
+* added detection of free disk space
+* force a unique output directory in the gtk2 gui
+* fix some exotic lame tags
+* poll for the drive for some seconds to detect a disc
+* more easy visual sign when some erors were not recovered
+* move to freedesktop.org standard directories to store files (auto migration)
+* automatically filter out illegal FAT32 characters in filenames
+* better implementation of encoding threads, fixes multiple encodings
+* show the amount of seconds for each trial to rip
+* new Italian translation
+* update of many translations
+* and many other small fixes
+
+---------0.5.7 RELEASE------
+* a fix for discs that start with a data track
+* a fix for checking the available space for some languages
+* a few fixes for the OpenBSD platform
+* fix a typo in the logfile when errors were corrected
+* don't replace bracquets in filenames -> []
+* fix a typo which resulted in a directory not containing the album name
+* allow multiple encoding threads once again :)
+
+---------0.5.6 RELEASE------
+* fix a problem with cdparanoia and last track on some drives
+* implement "abort" button while ripping
+* add Bulgarian translation
+* support for multiple-disc albums
+* some ruby-1.9 syntax fixes
+* fix various artist field for other codec
+* don't convert to ISO-8859-1 for lame if the character isn't supported
+* add an option to replace spaces with underscores
+* add an option to lowercase all filenames.
+* remove the hardcoded --id3v2only tag
+
+---------0.5.5 RELEASE------
+* Set lower priority to encoding processes
+* Fix image rips crash
+* Some CLI enhancements
+* Removed -p option of vorbis since it didn't work as intended.
+* Add Swedish translation and update others
+* Make the other codec setting more foolproof
+* Fix problem with proxy without password
+
+---------0.5.4 RELEASE------
+
+* disable threaded encoding, because since the ruby-gtk2 0.17
+release forking a process within a thread results in a freeze.
+Hopefully a more elegant solution will follow.
+* add French translation
+* add proxy support
+
+---------0.5.3 RELEASE------
+
+* fix detection of some devices
+* update Hungarian / German translation
+* fix permissions on install + other small config fixes
+* add totaltracks tag
+* add albumartist tag
+* add support for lame 3.98: all genre tags now allowed
+* mention the artist / album in the summary page
+* add accelerator keys
+* encoding errors are now always reported
+* support weird characters in tags, while disabling in the filename
+* small fixes here and there
+
+---------0.5.2 RELEASE------
+
+* add a check for permission while reading the cdrom drive
+* fix the configure script to obey the not needing ruby-gettext dependency
+* fix the terrible state of the command-line client
+
+---------0.5.1 RELEASE------
+
+* important fix that prevents creating corrupted wav files
+* move over to one single language file
+* make ruby-gettext optionally
+* single file ripping supported
+* cuesheet support
+* some small fixes all over the place
+
+---------0.5.0 RELEASE------
+
+* Make freedb work again (using http instead of socked connection)
+* Add basic support for normalize using "mp3gain/wavgain/vorbisgain/metaflac"
+* Add basic support for normalize using "normalize"
+* Ability to set multiple processes for encoding tasks (for all those dualcores)
+* Support to load freedb from local $HOME/.cddb folder
+* Reload disc metadata from the internet if same disc is still in the drive
+* Some fixes so the gtk2 interface (resizing, grey out buttons)
+* Fix for some cases the preferences weren't saved in time
+* Cdparanoia installation check on startup, prevents mysterious error
+* Option to not keep the logfile if no correction is needed
+* When warning that a directory already exists, mention which directory
+* Save various artist correctly on local yaml file
+* Get a larger icon for even more beauty, also install it conform standards
+* Use some environment variables
+* Add Spanish translation
+* Look if an encoding process exited normally and otherwise WARN
+* Any other fix I missed
+
+---------0.4.4 RELEASE------
+
+* Add Hungarian and Russian translation
+* Update the install procedure. Most distributions can now
+easily wrap the install to their standard procedure for packaging.
+After running the configure script a Makefile is created. In the configure
+phase --prefix is supported. With the make install --prefix and $DESTDIR
+ are both supported. If any wishes remain, please file an issue.
+* rake is no longer needed as dependency
+* helpfile.rb is no longer needed (replaced by configure)
+* the Makefile is no longer needed (auto-created by configure)
+* the Rakefile is no longer needed (replaced by configure)
+
+---------0.4.3 RELEASE------
+
+* first release that's translatable. Dutch and German languages
+are supported initially. This adds the ruby-gettext dependency.
+* check if there is write permission on the output location
+* improve other codec support (actually make it work)
+* unicode fixes in tags
+* off by one error. First sector was always read once
+* some small fixes all over the place
+
+----------0.4.2 RELEASE------
+
+* kill a memory leak, reduces memory use a lot with long tracks
+* removed the ruby-libglade2 dependency (ruby-gtk2 still needed)
+* implemented a dialog for the case that an ouput directory already exists
+* license included as a file: the GPL-3 License
+* changed location of settings file to $HOME/.rubyripper/settings
+* saving of (edited) freedb metadata to local disk $HOME/.rubyripper/freedb.yaml
+* added a .desktop file for auto inclusion in for instance the KDE menu
+* a lot of small fixes
+
+----------0.4.1 RELEASE------
+
+* fix a typo that prevented the loading of the icon after install and resulted in a crash
+* fix a bug where basedirs with a space would result in a crash
+* correct a typo for 'other codec'
+* make the parsing of rubyripper_settings file more foolproof
+* change the way 'Preferences' are shown. No more closebutton, but dynamic sidebutton
+
+----------0.4 RELEASE---------
+
+* rewrite of gtk2 interface => improved usability
+* MacOS support (cli interface)
+* improved freedb support (various artists, long tracknames)
+* fix for all known bugs of 0.3 release
+
+----------0.3 RELEASE---------
+
+* some gtk2 interface improvements
+* some cli interface improvements
+* make the freedb options now configurable
+* multiple freedb hits handling
+* removed cdda2wav support and dependency (too many bugs in cdda2wav)
+* removed ruby-freedb dependency, replaced with cd-discid
+* option to set amount of matches for all chunks
+* option to set amount of matches for erronous chunks
+* time based error reporting, no more chunk based
+* option to use any codec by using an external command
+* Makefile for easy installing / de-installing
+* Fix for all known bugs of 0.2 release

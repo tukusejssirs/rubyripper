@@ -1,0 +1,1 @@
+-I . -c -f doc -r spec/support/env.rb
