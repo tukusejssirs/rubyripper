@@ -106,14 +106,16 @@ def update_po
 end
 
 def update_mo
-  updateMoTask = GetText::Tools::Task.define do |task|
-    task.domain = 'rubyripper'
-    task.files = Dir.glob("lib/**/*.rb") + Dir.glob("bin/*")
-    task.package_name = 'Rubyripper'
-    task.package_version = '#{$rr_version}'
-    task.enable_po = false
+  if ($LANG_SUPPORT.size != 0)
+    updateMoTask = GetText::Tools::Task.define do |task|
+      task.domain = 'rubyripper'
+      task.files = Dir.glob("lib/**/*.rb") + Dir.glob("bin/*")
+      task.package_name = 'Rubyripper'
+      task.package_version = '#{$rr_version}'
+      task.enable_po = false
+    end
+    updateMoTask.invoke
   end
-  updateMoTask.invoke
 end
 
 def check_deps
