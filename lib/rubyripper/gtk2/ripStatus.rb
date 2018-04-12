@@ -34,10 +34,10 @@ class RipStatus
   def updateProgress(type, value)
     progress = "%.3g" % (value * 100)
     if type == 'encoding'
-      @encBar.text = _("Encoding progress %s \%") % [progress]
+      @encBar.text = _("Encoding progress %s %%") % [progress]
       @encBar.fraction = value
     else
-      @ripBar.text = _("Ripping progress %s \%") % progress
+      @ripBar.text = _("Ripping progress %s %%") % progress
       @ripBar.fraction = value
     end
   end
