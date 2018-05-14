@@ -87,7 +87,7 @@ private
     isFound?('fdkaac') if @prefs.fraunhofer
     isFound?('wavpack') if @prefs.wavpack
     isFound?('opusenc') if @prefs.opus
-    isFound?('normalize') if @prefs.normalizer == 'normalize'
+    isFound?('normalize', 'normalize-audio') if @prefs.normalizer == 'normalize'
 
     if @prefs.normalizer == 'replaygain'
       isFound?('metaflac') if @prefs.flac
@@ -98,8 +98,10 @@ private
     end
   end
 
-  def isFound?(binary)
-    if !@deps.installed?(binary)
+  def isFound?(binary, alternativeBinary=nil)
+    if !@deps.installed?(binary) &&
+        (alternativeBinary == nil ||
+        (alternativeBinary != nil && !@deps.installed?(alternativeBinary)))
       addError(:binaryNotFound, binary.capitalize)
     end
   end
