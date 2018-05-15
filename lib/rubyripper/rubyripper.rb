@@ -29,8 +29,10 @@ class Rubyripper
     @prefs = prefs ? prefs : Preferences::Main.instance
     @ui = userInterface
     @disc = disc
-    @trackSelection = trackSelection
+    @trackSelection = Array.new(trackSelection) # make a copy, it might be modified to include hidden track
     @file = file ? file : FileAndDir.instance()
+    # if enabled and hidden track exist, add the track 0 to the track selection
+    @trackSelection.unshift(0) if @prefs.ripHiddenAudio && @disc.getStartSector(0)
     puts "DEBUG: trackselection = #{@trackSelection}" if @prefs.debug
   end
 

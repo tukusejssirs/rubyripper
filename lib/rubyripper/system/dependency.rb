@@ -153,7 +153,7 @@ calculation unless %s is installed.") % ['Discid'],
     @optionalDeps << ['wavegain', installed?('wavegain')]
     @optionalDeps << ['vorbisgain', installed?('vorbisgain')]
     @optionalDeps << ['mp3gain', installed?('mp3gain')]
-    @optionalDeps << ['normalize', installed?('normalize')]
+    @optionalDeps << ['normalize', installed?('normalize') || installed?('normalize-audio')]
 
     # extra apps
     @optionalDeps << ['cdrdao', installed?('cdrdao')]

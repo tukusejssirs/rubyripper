@@ -115,7 +115,7 @@ attr_reader :instances
     iconPaths = [File.expand_path('../../share/icons/hicolor/128x128/apps', __FILE__), "/usr/local/share/icons/hicolor/128x128/apps"]
     iconPaths.each do |path|
       if File.exist?(file = File.join(path, 'rubyripper.png'))
-        @gtkWindow.icon = Gdk::Pixbuf.new(file)
+        @gtkWindow.icon = GdkPixbuf::Pixbuf.new(:file => file)
         break
       end
     end
