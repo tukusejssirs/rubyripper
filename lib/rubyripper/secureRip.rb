@@ -52,6 +52,7 @@ class SecureRip
     @crcs = []
     @correctedcrc = nil
     @digest = nil
+    @rippersettingsBak = nil
   end
 
   def startTheRip()
@@ -64,6 +65,7 @@ class SecureRip
     puts "DEBUG: Ripping image" if @prefs.debug
     checkParanoiaSettings()
     ripTrack()
+    restoreParanoiaSettings()
   end
     
   def ripTracks
@@ -72,6 +74,7 @@ class SecureRip
       puts "DEBUG: Ripping track #{track}" if @prefs.debug
       checkParanoiaSettings(track)
       ripTrack(track)
+      restoreParanoiaSettings()
     end
   end
 
@@ -80,8 +83,17 @@ class SecureRip
   def checkParanoiaSettings(track=nil)
     if @prefs.rippersettings.include?('-Z') && @prefs.offset != 0
       if @prefs.image || track == @disc.audiotracks
+        @rippersettingsBak = @prefs.rippersettings.dup()
         @prefs.rippersettings.gsub!(/-Z\s?/, '')
       end
+    end
+  end
+
+  # restore cdparanoia settings potentialy fixed up in checkParanoiaSettings
+  def restoreParanoiaSettings
+    if @rippersettingsBak != nil
+      @prefs.rippersettings = @rippersettingsBak
+      @rippersettingsBak = nil
     end
   end
 
